@@ -45,4 +45,8 @@ def write_file(fp, text):
 def get_files(dir_):
     if not os.path.isdir(dir_):
         raise ValueError(f'Директории {dir_} не существует')
-    return '\n'.join(os.listdir(dir_))
+
+    all_files = os.listdir(dir_)
+    if all_files:
+        return '\n'.join(all_files)
+    return 'Данная папка пуста'
