@@ -42,6 +42,19 @@ def write_file(fp, text):
         f.write(text)
 
 
+def rename(old, new):
+    if not os.path.exists(old):
+        raise ValueError(f'Файла {old} не существует')
+
+    file_name = os.path.basename(new)
+    if not pathvalidate.is_valid_filename(file_name):
+        raise ValueError(f'Некорректное имя файла: {new}')
+
+    if os.path.isfile(new):
+        raise ValueError(f'Файл {new} уже существует')
+    os.rename(old, new)
+
+
 def get_files(dir_):
     if not os.path.isdir(dir_):
         raise ValueError(f'Директории {dir_} не существует')

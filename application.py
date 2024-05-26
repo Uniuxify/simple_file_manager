@@ -22,6 +22,7 @@ class App:
             'create_file': fm.create_file,
             'read_file': fm.read_file,
             'write_file': fm.write_file,
+            'rename': fm.rename,
             'stop': self.stop_cmd
         }
 
@@ -51,6 +52,7 @@ class App:
         create_file {название файла} - создает файл с заданным названием
         read_file {название файла} - выводит содержимое указанного файла
         write_file {название файла} {text} - записывает текст в указанный файл
+        rename {изменяемый файл/директория} {новое название} - переименовывает (перемещает) файл или директорию
         stop - выход из программы
         """
         print(cmd_list)
@@ -68,6 +70,15 @@ class App:
                     args = [os.path.join(self.working_directory, ' '.join(args)), ]
                 if cmd == 'files':
                     args = [self.working_directory]
+                if cmd == 'rename':
+                    try:
+                        old_name = os.path.join(self.working_directory, args[0])
+                        new_name = os.path.join(self.working_directory, args[1])
+                        self.commands[cmd](old_name, new_name)
+
+                    except IndexError:
+                        print('Некорректно указаны аргументы')
+                    continue
                 out = self.commands[cmd](*args)
                 if out:
                     print(out)
