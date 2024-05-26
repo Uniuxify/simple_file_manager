@@ -26,21 +26,19 @@ class App:
         }
 
     def move_up_cmd(self):
-        parent = os.path.dirname(self.working_directory)
-        if os.path.samefile(parent, self.base_dir):
+        if os.path.samefile(self.working_directory, self.base_dir):
             print('Нельзя выйти за пределы изначальной директории')
             return
-        self.working_directory = parent
+        self.working_directory = os.path.dirname(self.working_directory)
 
     def move_cmd(self, dir_):
         new_wd = os.path.join(self.working_directory, dir_)
         if not os.path.isdir(new_wd):
             print(f'Директории {new_wd} не существует')
-
+        self.working_directory = new_wd
 
     def stop_cmd(self):
         print('Выход из программы')
-
 
     def help_cmd(self):
         cmd_list = """
@@ -63,13 +61,20 @@ class App:
         while cmd != 'stop':
             cmd, *args = input(f'{self.working_directory} >>> ').split(' ')
             if cmd not in self.commands.keys():
-                print('Команды \'cmd\' не существует')
+                print(f'Команды \'{cmd}\' не существует')
+                continue
             try:
                 if cmd in ['create_dir', 'create_file', 'read_file', 'write_file', 'del']:
-                    args[0] = os.path.join(self.working_directory, args[0])
+                    args = [os.path.join(self.working_directory, ' '.join(args)), ]
                 if cmd == 'files':
                     args = [self.working_directory]
-                print(self.commands[cmd](*args))
+                out = self.commands[cmd](*args)
+                if out:
+                    print(out)
 
             except TypeError:
-                print('Требуется указать аргумент')
+                print('Некорректно указаны аргументы')
+            except ValueError as e:
+                print(e)
+            except PermissionError as e:
+                print(f'Невозможно получить доступ к файлу/директории')

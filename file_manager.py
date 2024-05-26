@@ -6,7 +6,10 @@ def create_dir(dir_):
     if os.path.isdir(dir_):
         raise ValueError(f'Директория {dir_} уже существует')
     else:
-        os.makedirs(dir_)
+        try:
+            os.makedirs(dir_)
+        except OSError:
+            raise ValueError(f'Некорректное имя директории: {dir_}')
 
 
 def create_file(fp):
@@ -42,9 +45,4 @@ def write_file(fp, text):
 def get_files(dir_):
     if not os.path.isdir(dir_):
         raise ValueError(f'Директории {dir_} не существует')
-    res = ''
-    for root, dirs, files in os.walk(dir_):
-        for file in files:
-            res += (os.path.join(root, file)) + '\n'
-
-    return res[:-1]
+    return '\n'.join(os.listdir(dir_))
